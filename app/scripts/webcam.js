@@ -147,38 +147,78 @@ angular.module('webcam', [])
           }
 
           var mediaConstraint = { video: true, audio: false };
+          var videoOptions;
 
-          if (window.hasModernUserMedia) {
-            // The spec has changed towards a Promise based interface
-            navigator.getMedia(mediaConstraint)
-              .then(onSuccess)
-              .catch(onFailure);
-          } else {
-            navigator.getMedia(mediaConstraint, onSuccess, onFailure);
-          }
+          navigator.mediaDevices.enumerateDevices().then(function (devices) {
+            var sourceId = null;
+            var source = null;
+            var backCam = null;
+            $scope.config.sourceList = [];
+            $scope.config.sourceDevice = {};
 
-          /* Start streaming the webcam data when the video element can play
-           * It will do it only once
-           */
-          videoElem.addEventListener('canplay', function() {
-            if (!isStreaming) {
-              var scale = width / videoElem.videoWidth;
-              height = (videoElem.videoHeight * scale) ||
-                        $scope.config.videoHeight;
-              videoElem.setAttribute('width', width);
-              videoElem.setAttribute('height', height);
-              isStreaming = true;
-
-              $scope.config.video = videoElem;
-
-              _removeDOMElement(placeholder);
-
-              /* Call custom callback */
-              if ($scope.onStreaming) {
-                $scope.onStreaming();
+            // enumerate all devices
+            _.each(devices, function (device) {
+              // if there is still no video input, or if this is the rear camera
+              if (device.kind === 'videoinput') {
+                $scope.config.sourceList.push(device);
+                if (device.label.indexOf('back') !== -1) {
+                  backCam = device;
+                }
+                sourceId = device.deviceId;
+                source = device;
               }
+            });
+            // we didn't find any video input
+            if (!sourceId) {
+              throw 'no video input';
             }
-          }, false);
+
+            $scope.config.sourceDevice = backCam ? backCam : source;
+            $scope.config.source = backCam ? backCam.deviceId : sourceId;
+            // if we got to choose a source
+            if ($scope.config.source !== undefined) {
+              videoOptions = {optional: [{sourceId: $scope.config.source}]};
+            } else {
+              videoOptions = true;
+            }
+            mediaConstraint =
+                {
+                  video: videoOptions,
+                  audio: false
+                };
+
+            if (window.hasModernUserMedia) {
+              // The spec has changed towards a Promise based interface
+              navigator.getMedia(mediaConstraint)
+                  .then(onSuccess)
+                  .catch(onFailure);
+            } else {
+              navigator.getMedia(mediaConstraint, onSuccess, onFailure);
+            }
+
+            /* Start streaming the webcam data when the video element can play
+             * It will do it only once
+             */
+            videoElem.addEventListener('canplay', function () {
+              if (!isStreaming) {
+                var scale = width / videoElem.videoWidth;
+                height = (videoElem.videoHeight * scale) ||
+                    $scope.config.videoHeight;
+                videoElem.setAttribute('width', width);
+                videoElem.setAttribute('height', height);
+                isStreaming = true;
+
+                $scope.config.video = videoElem;
+
+                _removeDOMElement(placeholder);
+
+                /* Call custom callback */
+                if ($scope.onStreaming) {
+                  $scope.onStreaming();
+                }
+              }
+            }, false);
+          });
         };
 
         var stopWebcam = function stopWebcam() {
