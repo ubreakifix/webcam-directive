@@ -157,7 +157,7 @@ angular.module('webcam', [])
             $scope.config.sourceDevice = {};
 
             // enumerate all devices
-            _.each(devices, function (device) {
+            devices.forEach(function (device) {
               // if there is still no video input, or if this is the rear camera
               if (device.kind === 'videoinput') {
                 $scope.config.sourceList.push(device);
