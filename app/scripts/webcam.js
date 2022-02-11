@@ -147,7 +147,6 @@ angular.module('webcam', [])
           }
 
           var mediaConstraint = { video: {facingMode: 'environment'}, audio: false };
-          alert('yea buddy');
 
           if (window.hasModernUserMedia) {
             // The spec has changed towards a Promise based interface
