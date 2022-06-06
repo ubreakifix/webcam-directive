@@ -2,7 +2,7 @@ name: NPM Publish
 on:
   push:
     branches:
-      - ITO-230
+      - master
   workflow_dispatch:
 jobs:
   publish:
