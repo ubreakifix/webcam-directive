@@ -1,5 +1,5 @@
 {
-  "name": "webcam",
+  "name": "@ubreakifix/webcam",
   "author": "Jonas Hartmann",
   "version": "3.3.0",
   "license": "MIT",
@@ -47,5 +47,5 @@
   "scripts": {
     "test": "grunt ci"
   },
-  "repository": "git@github.com:jonashartmann/webcam-directive.git"
+  "repository": "git@github.com:ubreakifix/webcam-directive.git"
 }
