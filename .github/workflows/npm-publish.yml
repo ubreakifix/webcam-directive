@@ -1,0 +1,22 @@
+name: NPM Publish
+on:
+  push:
+    branches:
+      - ITO-230
+  workflow_dispatch:
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: NPM Publish
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Release new versions using AutoTagBot
+        uses: snapserv/action-autotagbot@master
+        with:
+          api_token: '${{ secrets.GITHUB_TOKEN }}'
+          source_file: 'package.json'
+          version_pattern: '"version"\s*:\s*"(?<version>[0-9.]+)"'
+
