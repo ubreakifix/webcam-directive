@@ -11,13 +11,13 @@ A complete example can be found at [http://jonashartmann.github.io/webcam-direct
 ## Download
 [![NPM](https://nodei.co/npm/webcam.png?compact=true)](https://nodei.co/npm/webcam/)
 
-#### Using [NPM](http://www.npmjs.com)
+#### Using the command line
 ```shell
-npm install webcam
+npm install @ubreakifix/webcam@3.2.13
 ```
-#### Using [Bower](http://bower.io/)
+#### Using package.json
 ```shell
-bower install webcam-directive
+"@ubreakifix/webcam": "3.2.13"
 ```
 
 #### There is a tag for each version, with the built javascript file inside the _dist_ directory
