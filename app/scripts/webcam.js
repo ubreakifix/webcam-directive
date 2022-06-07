@@ -4,7 +4,7 @@
  * (c) Jonas Hartmann http://jonashartmann.github.io/webcam-directive
  * License: MIT
  *
- * @version: 3.2.1
+ * @version: 3.2.13
  */
 'use strict';
 
@@ -12,9 +12,9 @@
   // GetUserMedia is not yet supported by all browsers
   // Until then, we need to handle the vendor prefixes
   navigator.getMedia = ( navigator.getUserMedia ||
-                        navigator.webkitGetUserMedia ||
-                        navigator.mozGetUserMedia ||
-                        navigator.msGetUserMedia);
+    navigator.webkitGetUserMedia ||
+    navigator.mozGetUserMedia ||
+    navigator.msGetUserMedia);
 
   // Latest specs modified how to access it
   window.hasModernUserMedia = 'mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices;
@@ -36,17 +36,17 @@ angular.module('webcam', [])
       replace: true,
       transclude: true,
       scope:
-      {
-        onError: '&',
-        onStream: '&',
-        onStreaming: '&',
-        placeholder: '=',
-        config: '=channel'
-      },
+        {
+          onError: '&',
+          onStream: '&',
+          onStreaming: '&',
+          placeholder: '=',
+          config: '=channel'
+        },
       link: function postLink($scope, element) {
         var videoElem = null,
-            videoStream = null,
-            placeholder = null;
+          videoStream = null,
+          placeholder = null;
 
         $scope.config = $scope.config || {};
 
@@ -146,79 +146,39 @@ angular.module('webcam', [])
             return;
           }
 
-          var mediaConstraint = { video: true, audio: false };
-          var videoOptions;
+          var mediaConstraint = { video: {facingMode: 'environment'}, audio: false };
 
-          navigator.mediaDevices.enumerateDevices().then(function (devices) {
-            var sourceId = null;
-            var source = null;
-            var backCam = null;
-            $scope.config.sourceList = [];
-            $scope.config.sourceDevice = {};
+          if (window.hasModernUserMedia) {
+            // The spec has changed towards a Promise based interface
+            navigator.getMedia(mediaConstraint)
+              .then(onSuccess)
+              .catch(onFailure);
+          } else {
+            navigator.getMedia(mediaConstraint, onSuccess, onFailure);
+          }
 
-            // enumerate all devices
-            devices.forEach(function (device) {
-              // if there is still no video input, or if this is the rear camera
-              if (device.kind === 'videoinput') {
-                $scope.config.sourceList.push(device);
-                if (device.label.indexOf('back') !== -1) {
-                  backCam = device;
-                }
-                sourceId = device.deviceId;
-                source = device;
+          /* Start streaming the webcam data when the video element can play
+          * It will do it only once
+          */
+          videoElem.addEventListener('canplay', function() {
+            if (!isStreaming) {
+              var scale = width / videoElem.videoWidth;
+              height = (videoElem.videoHeight * scale) ||
+                $scope.config.videoHeight;
+              videoElem.setAttribute('width', width);
+              videoElem.setAttribute('height', height);
+              isStreaming = true;
+
+              $scope.config.video = videoElem;
+
+              _removeDOMElement(placeholder);
+
+              /* Call custom callback */
+              if ($scope.onStreaming) {
+                $scope.onStreaming();
               }
-            });
-            // we didn't find any video input
-            if (!sourceId) {
-              throw 'no video input';
             }
-
-            $scope.config.sourceDevice = backCam ? backCam : source;
-            $scope.config.source = backCam ? backCam.deviceId : sourceId;
-            // if we got to choose a source
-            if ($scope.config.source !== undefined) {
-              videoOptions = {optional: [{sourceId: $scope.config.source}]};
-            } else {
-              videoOptions = true;
-            }
-            mediaConstraint =
-                {
-                  video: videoOptions,
-                  audio: false
-                };
-
-            if (window.hasModernUserMedia) {
-              // The spec has changed towards a Promise based interface
-              navigator.getMedia(mediaConstraint)
-                  .then(onSuccess)
-                  .catch(onFailure);
-            } else {
-              navigator.getMedia(mediaConstraint, onSuccess, onFailure);
-            }
-
-            /* Start streaming the webcam data when the video element can play
-             * It will do it only once
-             */
-            videoElem.addEventListener('canplay', function () {
-              if (!isStreaming) {
-                var scale = width / videoElem.videoWidth;
-                height = (videoElem.videoHeight * scale) ||
-                    $scope.config.videoHeight;
-                videoElem.setAttribute('width', width);
-                videoElem.setAttribute('height', height);
-                isStreaming = true;
-
-                $scope.config.video = videoElem;
-
-                _removeDOMElement(placeholder);
-
-                /* Call custom callback */
-                if ($scope.onStreaming) {
-                  $scope.onStreaming();
-                }
-              }
-            }, false);
-          });
+          }, false);
         };
 
         var stopWebcam = function stopWebcam() {
