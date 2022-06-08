@@ -13,7 +13,7 @@ A complete example can be found at [http://jonashartmann.github.io/webcam-direct
 
 #### Using the command line
 ```shell
-npm install @ubreakifix/webcam@3.2.13
+npm install @ubreakifix/webcam
 ```
 #### Using package.json
 ```shell
