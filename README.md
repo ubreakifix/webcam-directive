@@ -9,7 +9,6 @@ You can easily add it as a module to your own app.
 A complete example can be found at [http://jonashartmann.github.io/webcam-directive](http://jonashartmann.github.io/webcam-directive) (*gh-pages*)
 
 ## Download
-[![NPM](https://nodei.co/npm/webcam.png?compact=true)](https://nodei.co/npm/webcam/)
 
 #### Using the command line
 ```shell
@@ -18,16 +17,6 @@ npm install @ubreakifix/webcam
 #### Using package.json
 ```shell
 "@ubreakifix/webcam": "3.2.13"
-```
-
-#### There is a tag for each version, with the built javascript file inside the _dist_ directory
-	Ex.: dist/webcam.min.js
-
-## Installation
-
-#### Using script tag
-```html
-<script type="text/javascript" src="webcam.min.js"></script>
 ```
 
 ## Usage
