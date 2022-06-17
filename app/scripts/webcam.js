@@ -3,8 +3,6 @@
  *
  * (c) Jonas Hartmann http://jonashartmann.github.io/webcam-directive
  * License: MIT
- *
- * @version: 3.2.2
  */
 'use strict';
 

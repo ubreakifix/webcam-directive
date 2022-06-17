@@ -8,8 +8,6 @@ You can easily add it as a module to your own app.
 
 A complete example can be found at [http://jonashartmann.github.io/webcam-directive](http://jonashartmann.github.io/webcam-directive) (*gh-pages*)
 
-## Download
-
 #### Using the command line
 ```shell
 npm install @ubreakifix/webcam
